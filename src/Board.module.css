@@ -1,0 +1,177 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap');
+
+
+.game {
+  text-align: center;
+}
+
+.tabuleiro {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.status {
+  opacity: 0;
+  transform: scale(0.5);
+  min-height: 25px;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  background-color: wheat;
+  color: #434f62;
+  width: 300px;
+  padding-top: 5px; padding-bottom: 3px;
+  border-radius: 12.5px;
+  margin: auto;
+}
+
+.visivel {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.invisivel {
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.linha {
+  display: flex;
+  justify-content: center;
+}
+
+.quadrado {
+  width: 50px;
+  height: 50px;
+  background-color: #3c4556;
+  margin: 2px;
+  border-radius: 7px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  cursor: pointer;
+  padding-top: 5px;
+}
+
+.quadradoAtivo {
+  width: 50px;
+  height: 50px;
+  border: 3px solid #262d37;
+  border-radius: 7px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  margin: 2px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  cursor: pointer;
+  padding-top: 5px;
+  transition: all 0.2s ease, transform 0.1s ease;
+  color: white;
+}
+
+.selecionado {
+  border: 6px solid #262d37 !important;
+  transition: all 0.2s ease, transform 0.1s ease;
+}
+
+.quadradoOld {
+  width: 50px;
+  height: 50px;
+  border: 1px solid #ccc;
+  margin: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+}
+
+.green {
+  background-color: rgb(96, 173, 87);
+  color: white;
+}
+
+.yellow {
+  background-color: rgb(202, 202, 113);
+  color: black;
+}
+
+.gray {
+  background-color: #8d8d8d;
+  color: white;
+}
+
+.teclado {
+  display: flex;
+  flex-direction: column;
+  /* Para as linhas ficarem em coluna */
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  gap: 4px;
+  /* Espaçamento entre as linhas */
+  padding: 20px;
+}
+
+.linhaTeclado {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  font-family: "Josefin Sans", sans-serif;
+  font-weight: 700;
+}
+
+.tecla {
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  padding-top: 3px;
+  border: none;
+  border-radius: 5px;
+  background-color: #00000044;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  font-family: "Josefin Sans", sans-serif;
+  font-weight: 700;
+}
+
+.teclaEnter {
+  width: fit-content;
+  height: 40px;
+  padding-top: 3px;
+  padding-left: 15px;
+  padding-right: 15px;
+  font-size: 18px;
+  border: none;
+  color: #292929;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  font-family: "Josefin Sans", sans-serif;
+  font-weight: 700;
+}
+
+.tecla:active .teclaEnter:active {
+  transform: scale(0.95);
+}
+
+.tecla:disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
+.tecla:hover {
+  background-color: #e0e0e0;
+  /* Cor de hover para teclas */
+}
+
+
+.status {
+  margin-top: 20px;
+  font-size: 20px;
+  font-weight: bold;
+}
