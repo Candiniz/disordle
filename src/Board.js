@@ -49,9 +49,31 @@ const encontrarPalavraOriginal = (palavraDigitada) => {
   return cincoLetras.find(palavra => removerAcentos(palavra).toUpperCase() === palavraSemAcento);
 };
 
-const pegarPalavraAleatoria = () => {
-  const indiceAleatorio = Math.floor(Math.random() * cincoLetras.length);
-  return cincoLetras[indiceAleatorio].toUpperCase(); // Palavra original com acento
+const pegarPalavraAleatoria = async () => {
+  try {
+    // Fetch das palavras e verbos
+    const palavrasRes = await fetch('https://raw.githubusercontent.com/fserb/pt-br/refs/heads/master/dicio');
+    const verbosRes = await fetch('https://raw.githubusercontent.com/fserb/pt-br/refs/heads/master/verbos');
+    const palavrasText = await palavrasRes.text();
+    const verbosText = await verbosRes.text();
+
+    // Dividir o conteúdo em um array de palavras
+    const palavras = palavrasText.split('\n').map(palavra => palavra.trim());
+    const verbos = verbosText.split('\n').map(verbo => verbo.trim());
+
+    // Combina as listas de palavras e verbos
+    const todasPalavras = [...palavras, ...verbos];
+
+    // Filtra palavras com exatamente 5 letras
+    const palavrasFiltradas = todasPalavras.filter(palavra => palavra.length === 5);
+
+    // Escolhe uma palavra aleatória da lista filtrada
+    const indiceAleatorio = Math.floor(Math.random() * palavrasFiltradas.length);
+    return palavrasFiltradas[indiceAleatorio].toUpperCase(); // Palavra com acento
+  } catch (error) {
+    console.error("Erro ao carregar as palavras:", error);
+    return ''; // Retorna uma string vazia caso ocorra algum erro
+  }
 };
 
 function Board() {
@@ -67,9 +89,14 @@ function Board() {
   const [copias, setCopias] = useState([1, 2, 3, 4, 5]);
 
   useEffect(() => {
-    const palavraAleatoria = pegarPalavraAleatoria();
-    setPalavra(palavraAleatoria);  // Armazena a palavra original com acento no estado
-    setTeclado('ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''));
+    const carregarPalavra = async () => {
+      const palavraAleatoria = await pegarPalavraAleatoria();
+      setPalavra(palavraAleatoria);  // Armazena a palavra original com acento no estado
+      console.log(palavra)
+      setTeclado('ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''));
+    };
+    
+    carregarPalavra();
   }, []);
 
   useEffect(() => {

@@ -5,6 +5,37 @@
     height: 100dvh;
     width: 100px;
     background-color: #323b48;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.menuLeftUl {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid white;
+    border-top: 1px solid white;
+}
+
+.menuLeftUl div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+
+.svgs {
+    width: 40px;
+    height: 40px; 
 }
 
 .menuRight {
@@ -15,3 +46,8 @@
     width: 100px;
     background-color: #323b48;
 }
+
+.espelho {
+    transform: scaleX(-1); /* Espelha horizontalmente a imagem */
+    -webkit-transform: scaleX(-1); /* Para Safari */
+  }
