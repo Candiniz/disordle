@@ -4,6 +4,8 @@ import { cincoLetras } from './cincoLetras.js';
 import styles from './Board.module.css';
 import { FaBackspace } from "react-icons/fa";
 import './globals.css';
+import { getItem, setItem } from './utils/localStorage.js';
+import ModalVitoria from './ModalVitoria.js';
 
 // Função para remover acentos e cedilhas
 const removerAcentos = (str) => {
@@ -56,23 +58,45 @@ const pegarPalavraAleatoria = () => {
 };
 
 function Board1() {
-  const [palavra, setPalavra] = useState('');
-  const [tentativa, setTentativa] = useState(Array(5).fill(''));  // Agora é um array de 5 posições
+
+  const [palavra, setPalavra] = useState(() => {
+    const lsPalavra = getItem('b1palavra1');
+    return lsPalavra || '';
+  });
+  const [histórico, setHistórico] = useState(() => {
+    const lsHistorico = getItem('b1historico1');
+    return lsHistorico || []
+  });
+  const [copias, setCopias] = useState(() => {
+    const lsCopias = getItem('b1copias1');
+    return lsCopias || [1, 2, 3, 4, 5]
+  });
+
+  const [tentativa, setTentativa] = useState(Array(5).fill(''));
   const [posicaoSelecionada, setPosicaoSelecionada] = useState(0); // Índice do quadrado selecionado
-  const [histórico, setHistórico] = useState([]);
+  const [reiniciarJogo, setReiniciarJogo] = useState(false);
   const [, setTeclado] = useState([]);
   const [gameOver, setGameOver] = useState(false);
   const [vencedor, setVencedor] = useState(false);
   const [erroPalavra, setErroPalavra] = useState('');
   const [showErro, setShowErro] = useState(false);
-  const [copias, setCopias] = useState([1, 2, 3, 4, 5]);
   const [animacaoEmCurso, setAnimacaoEmCurso] = useState(false);
 
   useEffect(() => {
-    const palavraAleatoria = pegarPalavraAleatoria();
-    setPalavra(palavraAleatoria);  // Armazena a palavra original com acento no estado
-    setTeclado('ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''));
-  }, []);
+    setItem("b1palavra1", palavra)
+    setItem("b1historico1", histórico)
+    setItem("b1copias1", copias)
+  }, [palavra, histórico, copias])
+
+  useEffect(() => {
+    if (reiniciarJogo || palavra === '') {
+      const palavraAleatoria = pegarPalavraAleatoria();
+      setPalavra(palavraAleatoria);  // Armazena a palavra original com acento no estado
+      setTeclado('ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''));
+
+      setReiniciarJogo(false);
+    }
+  }, [reiniciarJogo, palavra]);
 
   useEffect(() => {
     if (erroPalavra) {
@@ -81,6 +105,13 @@ function Board1() {
       return () => clearTimeout(timer);
     }
   }, [erroPalavra]);
+
+  const handleReiniciarClick = () => {
+    setReiniciarJogo(true);
+    setTentativa(Array(5).fill(''));
+    setHistórico([])
+    setCopias([1, 2, 3, 4, 5])
+  };
 
   const verificarCor = (tentativa, palavra) => {
     const cores = Array(5).fill('gray');
@@ -215,9 +246,20 @@ function Board1() {
   return (
     <div className={styles.game}>
 
+      {gameOver &&
+        <ModalVitoria vencedor={vencedor} onClose={() => {
+          setGameOver(false)
+          setVencedor(false)
+          handleReiniciarClick()
+        }
+        }
+        />
+      }
+
       <div className={`${styles.status} ${showErro ? styles.visivel : styles.invisivel}`}>
         {erroPalavra}
       </div>
+      {gameOver && !vencedor && <div className={styles.status}>Game Over! A palavra era: {palavra}</div>}
 
       <div className={styles.tabuleiro}>
         {histórico.map((tentativa, index) => (
@@ -226,17 +268,23 @@ function Board1() {
               <motion.div
                 key={idx}
                 className={`${styles.quadrado} ${styles[cor]}`}
-                initial={{ backgroundColor: 'transparent', rotate: 360, opacity: 0 }}
+                initial={{
+                  backgroundColor: 'transparent',
+                  rotateX: 90,  // Inicia o quadrado com um giro no eixo X
+                  opacity: 0,
+                }}
                 animate={{
                   backgroundColor: cor,
                   opacity: 1,
-                  rotate: 0
+                  rotateX: 0,  // Finaliza o quadrado com a rotação no eixo X de volta para 0
                 }}
                 transition={{
-                  duration: 1, 
-                  delay: idx * 0.2 
+                  duration: 1,
+                  delay: idx * 0.2,
+                  ease: "easeInOut",  // Você pode ajustar o tipo de easing para um efeito mais suave
                 }}
               >
+
                 {tentativa[idx]}
               </motion.div>
 
@@ -322,8 +370,6 @@ function Board1() {
       </div>
 
 
-      {vencedor && <div className={styles.status}>Você venceu!</div>}
-      {gameOver && !vencedor && <div className={styles.status}>Game Over! A palavra era: {palavra}</div>}
     </div>
   );
 }

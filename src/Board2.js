@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { cincoLetras } from './cincoLetras.js';
 import styles from './Board.module.css';
 import { FaBackspace } from "react-icons/fa";
+import { getItem, setItem } from './utils/localStorage.js';
+import ModalVitoria from './ModalVitoria.js';
 import './globals.css';
 
 // Função para remover acentos e cedilhas
@@ -28,23 +31,63 @@ const removerAcentos = (str) => {
 
 
 function Board2() {
-    const [palavra1, setPalavra1] = useState('');
-    const [palavra2, setPalavra2] = useState('');
+    const [palavra1, setPalavra1] = useState(() => {
+        const lsPalavra1 = getItem('b2palavra1');
+        return lsPalavra1 || '';
+    });
+    const [palavra2, setPalavra2] = useState(() => {
+        const lsPalavra2 = getItem('b2palavra2');
+        return lsPalavra2 || '';
+    });
+
+    const [histórico1, setHistórico1] = useState(() => {
+        const lsPalavra2 = getItem('b2histórico1');
+        return lsPalavra2 || [];
+    });
+    const [histórico2, setHistórico2] = useState(() => {
+        const lsPalavra2 = getItem('b2histórico2');
+        return lsPalavra2 || [];
+    });
+
+    const [copias1, setCopias1] = useState(() => {
+        const lsPalavra2 = getItem('b2copias1');
+        return lsPalavra2 || [1, 2, 3, 4, 5];
+    });
+    const [copias2, setCopias2] = useState(() => {
+        const lsPalavra2 = getItem('b2copias2');
+        return lsPalavra2 || [1, 2, 3, 4, 5];
+    });
+
     const [tentativa, setTentativa] = useState(Array(5).fill(''));
+    const [reiniciarJogo, setReiniciarJogo] = useState(false);
     const [posicaoSelecionada, setPosicaoSelecionada] = useState(0);
-    const [histórico1, setHistórico1] = useState([]);
-    const [histórico2, setHistórico2] = useState([]);
     const [tabuleiro1Congelado, setTabuleiro1Congelado] = useState(false);
     const [tabuleiro2Congelado, setTabuleiro2Congelado] = useState(false);
-
-
+    const [animacaoEmCurso, setAnimacaoEmCurso] = useState(false);
     const [gameOver, setGameOver] = useState(false);
     const [vencedor, setVencedor] = useState(false);
     const [erroPalavra, setErroPalavra] = useState('');
     const [showErro, setShowErro] = useState(false);
-    const [copias1, setCopias1] = useState([1, 2, 3, 4, 5]);
-    const [copias2, setCopias2] = useState([1, 2, 3, 4, 5]);
 
+    useEffect(() => {
+        setItem("b2palavra1", palavra1)
+        setItem("b2palavra2", palavra2)
+        setItem("b2histórico1", histórico1)
+        setItem("b2histórico2", histórico2)
+        setItem("b2copias1", copias1)
+        setItem("b2copias2", copias2)
+    }, [copias1, copias2, histórico1, histórico2, palavra1, palavra2])
+
+    const handleReiniciarClick = () => {
+        setReiniciarJogo(true);
+        setHistórico1([])
+        setHistórico2([])
+        setCopias1([1, 2, 3, 4, 5])
+        setCopias2([1, 2, 3, 4, 5])
+        setTentativa(Array(5).fill(''));
+        setTabuleiro1Congelado(false);  
+        setTabuleiro2Congelado(false);   
+    };
 
     const encontrarPalavraOriginal = (palavraDigitada) => {
         // Remove acentos da palavra digitada
@@ -71,8 +114,11 @@ function Board2() {
 
 
     useEffect(() => {
-        pegarPalavrasAleatorias();
-    }, []);
+        if (reiniciarJogo || (palavra1 === '' && palavra2 === '')) {
+            pegarPalavrasAleatorias();
+            setReiniciarJogo(false)
+        }
+    }, [palavra1, palavra2, reiniciarJogo]);
 
     useEffect(() => {
         if (erroPalavra) {
@@ -148,47 +194,58 @@ function Board2() {
 
             let novoTabuleiro1Congelado = tabuleiro1Congelado;
             let novoTabuleiro2Congelado = tabuleiro2Congelado;
-
             if (!tabuleiro1Congelado) {
                 setHistórico1([...histórico1, { tentativa: tentativaFormatada, cor: cor1 }]);
                 if (cor1.every(c => c === 'green')) {
                     novoTabuleiro1Congelado = true;
                 }
             }
-
             if (!tabuleiro2Congelado) {
                 setHistórico2([...histórico2, { tentativa: tentativaFormatada, cor: cor2 }]);
                 if (cor2.every(c => c === 'green')) {
                     novoTabuleiro2Congelado = true;
                 }
             }
+            setAnimacaoEmCurso(true);
 
-            // ✅ Agora verificamos a vitória imediatamente!
-            if (novoTabuleiro1Congelado && novoTabuleiro2Congelado) {
-                setVencedor(true);
-                setGameOver(true);
-            } else if (histórico1.length === 5 || histórico2.length === 5) {
-                setGameOver(true);
-            }
+            setTimeout(() => {
+                // ✅ Agora verificamos a vitória imediatamente!
+                if (novoTabuleiro1Congelado && novoTabuleiro2Congelado) {
+                    setVencedor(true);
+                    setGameOver(true);
+                } else if (histórico1.length === 5 || histórico2.length === 5) {
+                    setGameOver(true);
+                }
 
-            setTabuleiro1Congelado(novoTabuleiro1Congelado);
-            setTabuleiro2Congelado(novoTabuleiro2Congelado);
+                setTabuleiro1Congelado(novoTabuleiro1Congelado);
+                setTabuleiro2Congelado(novoTabuleiro2Congelado);
 
-            // ✅ Reduz número de cópias somente se algum tabuleiro ainda está ativo
-            if (!novoTabuleiro1Congelado) {
-                setCopias1(prevCopias1 => prevCopias1.slice(0, -1));
-            }
-            if (!novoTabuleiro2Congelado) {
-                setCopias2(prevCopias2 => prevCopias2.slice(0, -1));
-            }
-            setTentativa(Array(5).fill(''));
-            setPosicaoSelecionada(0);
+                // ✅ Reduz número de cópias somente se algum tabuleiro ainda está ativo
+                if (!novoTabuleiro1Congelado) {
+                    setCopias1(prevCopias1 => prevCopias1.slice(0, -1));
+                }
+                if (!novoTabuleiro2Congelado) {
+                    setCopias2(prevCopias2 => prevCopias2.slice(0, -1));
+                }
+                setTentativa(Array(5).fill(''));
+                setPosicaoSelecionada(0);
+                setAnimacaoEmCurso(false);
+            }, 1300)
+
         }
     };
 
-
     return (
         <div className={styles.game}>
+
+            {gameOver &&
+                <ModalVitoria vencedor={vencedor} onClose={() => {
+                    setGameOver(false)
+                    setVencedor(false)
+                    handleReiniciarClick()
+                }} />
+            }
+
             <div className={`${styles.status} ${showErro ? styles.visivel : styles.invisivel}`}>
                 {erroPalavra}
             </div>
@@ -200,15 +257,28 @@ function Board2() {
                     {histórico1.map((registro, index) => (
                         <div className={styles.linha} key={index}>
                             {registro.cor.map((cor, idx) => (
-                                <div key={idx} className={`${styles.quadrado} ${styles[cor]}`}>
+                                <motion.div
+                                    key={idx}
+                                    className={`${styles.quadrado} ${styles[cor]}`}
+                                    initial={{ backgroundColor: 'transparent', rotateX: 90, opacity: 0 }}
+                                    animate={{
+                                        backgroundColor: cor,
+                                        opacity: 1,
+                                        rotateX: 0,
+                                    }}
+                                    transition={{
+                                        duration: 1,
+                                        delay: idx * 0.2
+                                    }}
+                                >
                                     {registro.tentativa[idx]}
-                                </div>
+                                </motion.div>
                             ))}
                         </div>
                     ))}
 
                     {/* Tentativa ativa no tabuleiro 1 */}
-                    {!gameOver && !tabuleiro1Congelado && (
+                    {!gameOver && !animacaoEmCurso && !tabuleiro1Congelado && (
                         <div className={styles.linha}>
                             {tentativa.map((letra, idx) => (
                                 <div
@@ -237,15 +307,28 @@ function Board2() {
                     {histórico2.map((registro, index) => (
                         <div className={styles.linha} key={index}>
                             {registro.cor.map((cor, idx) => (
-                                <div key={idx} className={`${styles.quadrado} ${styles[cor]}`}>
+                                <motion.div
+                                    key={idx}
+                                    className={`${styles.quadrado} ${styles[cor]}`}
+                                    initial={{ backgroundColor: 'transparent', rotateX: 90, opacity: 0 }}
+                                    animate={{
+                                        backgroundColor: cor,
+                                        opacity: 1,
+                                        rotateX: 0
+                                    }}
+                                    transition={{
+                                        duration: 1,
+                                        delay: idx * 0.2
+                                    }}
+                                >
                                     {registro.tentativa[idx]}
-                                </div>
+                                </motion.div>
                             ))}
                         </div>
                     ))}
 
                     {/* Tentativa ativa no tabuleiro 2 */}
-                    {!gameOver && !tabuleiro2Congelado && (
+                    {!gameOver && !animacaoEmCurso && !tabuleiro2Congelado && (
                         <div className={styles.linha}>
                             {tentativa.map((letra, idx) => (
                                 <div
