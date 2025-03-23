@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { cincoLetras } from './cincoLetras.js';  
-import styles from './Board.module.css';  
+import { motion } from 'framer-motion';
+import { cincoLetras } from './cincoLetras.js';
+import styles from './Board.module.css';
 import { FaBackspace } from "react-icons/fa";
 import './globals.css';
 
@@ -65,6 +66,7 @@ function Board1() {
   const [erroPalavra, setErroPalavra] = useState('');
   const [showErro, setShowErro] = useState(false);
   const [copias, setCopias] = useState([1, 2, 3, 4, 5]);
+  const [animacaoEmCurso, setAnimacaoEmCurso] = useState(false);
 
   useEffect(() => {
     const palavraAleatoria = pegarPalavraAleatoria();
@@ -128,8 +130,6 @@ function Board1() {
   const handleSubmit = () => {
     if (tentativa.join('').length === 5) {
       const palavraDigitada = tentativa.join('');
-
-      // Encontra a palavra original no array cincoLetras
       const palavraOriginal = encontrarPalavraOriginal(palavraDigitada);
 
       if (!palavraOriginal) {
@@ -143,32 +143,48 @@ function Board1() {
 
         return;
       } else {
-        setCopias(prevCopias => {
-          if (prevCopias.length > 0) {
-            // Remove a última cópia da lista
-            return prevCopias.slice(0, prevCopias.length - 1);
-          }
-          return prevCopias; // Não faz nada se não houver mais cópias
-        });
+        setTimeout(() => {
+          setCopias(prevCopias => {
+            if (prevCopias.length > 0) {
+              // Remove a última cópia da lista
+              return prevCopias.slice(0, prevCopias.length - 1);
+            }
+            return prevCopias;
+          });
+        }, 1300)
 
-        // A palavra original será a palavra restaurada
+        // Atualiza o histórico e aplica a cor imediatamente
         const palavraRestaurada = palavraOriginal.toUpperCase(); // Palavra restaurada com acentos
-
-        // Adiciona a palavra restaurada no histórico
         const novaTentativa = [...histórico, palavraRestaurada];
+
+        // Atualiza o histórico de tentativas
         setHistórico(novaTentativa);
-        setTentativa(Array(5).fill(''));
 
-        // Compara a palavra sem acento
-        if (removerAcentos(palavraRestaurada) === removerAcentos(palavra)) {
-          setVencedor(true);
-          setGameOver(true);
-        } else if (novaTentativa.length === 6) {
-          setGameOver(true);
-        }
+        // Inicia a animação, deixando a tentativa ativa invisível
+        setAnimacaoEmCurso(true);
 
-        setPosicaoSelecionada(0);
-        setErroPalavra(''); // Limpa o erro
+        // Atraso de 1300ms para atualizar o estado do jogo (gameOver, vencedor, setTentativa)
+        setTimeout(() => {
+          // Restaura a visibilidade da tentativa ativa após a animação
+          setAnimacaoEmCurso(false);
+
+          // Resetando os estados após a animação
+          setTentativa(Array(5).fill(''));
+          setPosicaoSelecionada(0);
+          setErroPalavra(''); // Limpa o erro após o delay
+
+          // Verifica se a palavra foi acertada após o delay
+          if (removerAcentos(palavraRestaurada) === removerAcentos(palavra)) {
+            setVencedor(true);
+            setGameOver(true);
+            setCopias(prevCopias => [...prevCopias, prevCopias.length + 1]);
+          } else if (novaTentativa.length === 6) {
+            setGameOver(true);
+          }
+
+          // Desabilita o teclado e outras ações relacionadas ao estado do jogo
+          setTeclado([]); // Desabilita o teclado
+        }, 1300);
       }
     } else {
       // Se a palavra for menor que 5 caracteres
@@ -181,6 +197,7 @@ function Board1() {
       }, 10);
     }
   };
+
 
 
   const handleBackspace = () => {
@@ -206,14 +223,28 @@ function Board1() {
         {histórico.map((tentativa, index) => (
           <div className={styles.linha} key={index}>
             {verificarCor(tentativa, palavra).map((cor, idx) => (
-              <div key={idx} className={`${styles.quadrado} ${styles[cor]}`}>
+              <motion.div
+                key={idx}
+                className={`${styles.quadrado} ${styles[cor]}`}
+                initial={{ backgroundColor: 'transparent', rotate: 360, opacity: 0 }}
+                animate={{
+                  backgroundColor: cor,
+                  opacity: 1,
+                  rotate: 0
+                }}
+                transition={{
+                  duration: 1, 
+                  delay: idx * 0.2 
+                }}
+              >
                 {tentativa[idx]}
-              </div>
+              </motion.div>
+
             ))}
           </div>
         ))}
 
-        {!gameOver &&
+        {!gameOver && !animacaoEmCurso &&
           <div className={styles.linha}>
             {Array.from({ length: 5 }, (_, idx) => (
               <div
