@@ -5,6 +5,15 @@
   text-align: center;
 }
 
+.tabuleiroContainer {
+  display: flex;
+  margin: auto;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
+}
+
 .tabuleiro {
   display: flex;
   flex-direction: column;

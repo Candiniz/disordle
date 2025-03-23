@@ -1,14 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.js';
-import Board from './Board.js'
+import Board1 from './Board1.js'
+import Board2 from './Board2.js'
 import reportWebVitals from './reportWebVitals.js';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <App />
-    <Board />
+    <Board2 />
   </React.StrictMode>
 );
 
