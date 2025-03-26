@@ -4,7 +4,10 @@ import { cincoLetras } from './cincoLetras.js';
 import styles from './Board.module.css';
 import { FaBackspace } from "react-icons/fa";
 import { getItem, setItem } from './utils/localStorage.js';
-import ModalVitoria from './ModalVitoria.js';
+import { useTheme } from "./ThemeContext.js";
+import ModalFail from './modals/ModalFail.js';
+
+import ModalVitoria from './modals/ModalVitoria.js';
 import './globals.css';
 
 // Função para remover acentos e cedilhas
@@ -41,21 +44,21 @@ function Board2() {
     });
 
     const [histórico1, setHistórico1] = useState(() => {
-        const lsPalavra2 = getItem('b2histórico1');
-        return lsPalavra2 || [];
+        const lsHistorico1 = getItem('b2histórico1');
+        return lsHistorico1 || [];
     });
     const [histórico2, setHistórico2] = useState(() => {
-        const lsPalavra2 = getItem('b2histórico2');
-        return lsPalavra2 || [];
+        const lsHistorico2 = getItem('b2histórico2');
+        return lsHistorico2 || [];
     });
 
     const [copias1, setCopias1] = useState(() => {
-        const lsPalavra2 = getItem('b2copias1');
-        return lsPalavra2 || [1, 2, 3, 4, 5];
+        const lsCopias1 = getItem('b2copias1');
+        return lsCopias1 || [1, 2, 3, 4, 5];
     });
     const [copias2, setCopias2] = useState(() => {
-        const lsPalavra2 = getItem('b2copias2');
-        return lsPalavra2 || [1, 2, 3, 4, 5];
+        const lsCopias2 = getItem('b2copias2');
+        return lsCopias2 || [1, 2, 3, 4, 5];
     });
 
     const [tentativa, setTentativa] = useState(Array(5).fill(''));
@@ -68,6 +71,9 @@ function Board2() {
     const [vencedor, setVencedor] = useState(false);
     const [erroPalavra, setErroPalavra] = useState('');
     const [showErro, setShowErro] = useState(false);
+    const [letrasApagadas, setLetrasApagadas] = useState(new Set());
+
+    const { isDark } = useTheme();
 
     useEffect(() => {
         setItem("b2palavra1", palavra1)
@@ -85,8 +91,9 @@ function Board2() {
         setCopias1([1, 2, 3, 4, 5])
         setCopias2([1, 2, 3, 4, 5])
         setTentativa(Array(5).fill(''));
-        setTabuleiro1Congelado(false);  
-        setTabuleiro2Congelado(false);   
+        setTabuleiro1Congelado(false);
+        setTabuleiro2Congelado(false);
+        setLetrasApagadas(new Set())
     };
 
     const encontrarPalavraOriginal = (palavraDigitada) => {
@@ -129,36 +136,59 @@ function Board2() {
     }, [erroPalavra]);
 
     const verificarCor = (tentativa, palavra) => {
-        const cores = Array(5).fill('gray');
+        const cores = Array(5).fill('Qgray');
         const palavraSemAcento = removerAcentos(palavra);
         const tentativaSemAcento = tentativa.split('').map(letra => removerAcentos(letra));
 
         for (let i = 0; i < 5; i++) {
             if (tentativaSemAcento[i] === palavraSemAcento[i]) {
-                cores[i] = 'green';
+                cores[i] = 'Qgreen';
             }
         }
 
         for (let i = 0; i < 5; i++) {
-            if (cores[i] !== 'green' && palavraSemAcento.includes(tentativaSemAcento[i])) {
-                cores[i] = 'yellow';
+            if (cores[i] !== 'Qgreen' && palavraSemAcento.includes(tentativaSemAcento[i])) {
+                cores[i] = 'Qyellow';
             }
         }
 
         return cores;
     };
 
-    const handleInput = (letra) => {
-        if (!gameOver) {
-            const novaTentativa = [...tentativa];
-            if (posicaoSelecionada < 5) {
-                novaTentativa[posicaoSelecionada] = letra;
-                setTentativa(novaTentativa);
-            }
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (gameOver) return;
 
-            if (posicaoSelecionada < 4) {
-                setPosicaoSelecionada(posicaoSelecionada + 1);
+            const key = event.key.toUpperCase();
+
+            if (key === "ENTER") {
+                event.preventDefault();
+                handleSubmit();
+            } else if (key === "BACKSPACE") {
+                event.preventDefault();
+                handleBackspace();
+            } else if (key === "ARROWRIGHT") {
+                event.preventDefault();
+                setPosicaoSelecionada((prev) => Math.min(prev + 1, 4)); // Evita passar do último quadrado
+            } else if (key === "ARROWLEFT") {
+                event.preventDefault();
+                setPosicaoSelecionada((prev) => Math.max(prev - 1, 0)); // Evita passar do primeiro quadrado
+            } else if (/^[A-Z]$/.test(key)) {
+                handleInput(key);
             }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [tentativa, posicaoSelecionada, gameOver]);
+
+    const handleInput = (letra) => {
+        if (posicaoSelecionada < 5) {
+            const novaTentativa = [...tentativa];
+            novaTentativa[posicaoSelecionada] = letra;
+            setTentativa(novaTentativa);
+
+            setPosicaoSelecionada((prev) => (prev < 4 ? prev + 1 : prev));
         }
     };
 
@@ -168,15 +198,23 @@ function Board2() {
 
     const handleBackspace = () => {
         const novaTentativa = [...tentativa];
-        novaTentativa[posicaoSelecionada] = '';
-        setTentativa(novaTentativa);
 
-        let novaPosicao = posicaoSelecionada;
-        while (novaPosicao > 0 && novaTentativa[novaPosicao] === '') {
-            novaPosicao--;
+        if (novaTentativa[posicaoSelecionada] !== '') {
+            // Se o quadrado atual tem uma letra, apenas limpa sem mudar de posição
+            novaTentativa[posicaoSelecionada] = '';
+        } else {
+            // Se o quadrado atual está vazio, volta para o anterior e limpa
+            let novaPosicao = posicaoSelecionada;
+            while (novaPosicao > 0 && novaTentativa[novaPosicao] === '') {
+                novaPosicao--;
+            }
+            novaTentativa[novaPosicao] = '';
+            setPosicaoSelecionada(novaPosicao);
         }
-        setPosicaoSelecionada(novaPosicao);
+
+        setTentativa(novaTentativa);
     };
+
 
     const handleSubmit = () => {
         if (tentativa.join('').length === 5) {
@@ -188,6 +226,26 @@ function Board2() {
                 return;
             }
 
+            setLetrasApagadas(prev => {
+                const novasLetrasApagadas = new Set(prev);
+
+                tentativa.forEach((letra) => {
+                    const letraNormalizada = removerAcentos(letra);
+
+                    // Verifica se a letra existe em pelo menos uma das palavras
+                    const existeEmAlgumaPalavra = [palavra1, palavra2].some(palavra =>
+                        removerAcentos(palavra).includes(letraNormalizada)
+                    );
+
+                    if (!existeEmAlgumaPalavra) {
+                        novasLetrasApagadas.add(letra);
+                    }
+                });
+
+                return novasLetrasApagadas;
+            });
+
+
             const tentativaFormatada = palavraOriginal.toUpperCase();
             const cor1 = verificarCor(tentativaFormatada, palavra1);
             const cor2 = verificarCor(tentativaFormatada, palavra2);
@@ -196,23 +254,24 @@ function Board2() {
             let novoTabuleiro2Congelado = tabuleiro2Congelado;
             if (!tabuleiro1Congelado) {
                 setHistórico1([...histórico1, { tentativa: tentativaFormatada, cor: cor1 }]);
-                if (cor1.every(c => c === 'green')) {
+                if (cor1.every(c => c === 'Qgreen')) {
                     novoTabuleiro1Congelado = true;
                 }
             }
             if (!tabuleiro2Congelado) {
                 setHistórico2([...histórico2, { tentativa: tentativaFormatada, cor: cor2 }]);
-                if (cor2.every(c => c === 'green')) {
+                if (cor2.every(c => c === 'Qgreen')) {
                     novoTabuleiro2Congelado = true;
                 }
             }
             setAnimacaoEmCurso(true);
-
+            console.log(novoTabuleiro1Congelado, novoTabuleiro2Congelado)
             setTimeout(() => {
                 // ✅ Agora verificamos a vitória imediatamente!
                 if (novoTabuleiro1Congelado && novoTabuleiro2Congelado) {
                     setVencedor(true);
                     setGameOver(true);
+                    console.log('vencedor')
                 } else if (histórico1.length === 5 || histórico2.length === 5) {
                     setGameOver(true);
                 }
@@ -232,27 +291,47 @@ function Board2() {
                 setAnimacaoEmCurso(false);
             }, 1300)
 
+        } else {
+            setTimeout(() => {
+                setErroPalavra('Palavra muito pequena!');
+                setShowErro(true); // Exibe a mensagem de erro
+            }, 10);
         }
     };
 
     return (
-        <div className={styles.game}>
+        <motion.div
+            className={styles.game}
+            initial={{ rotateX: 90 }}
+            animate={{ rotateX: 0 }}
+            transition={{
+                duration: 0.3,
+            }}
+        >
 
-            {gameOver &&
+            {gameOver && vencedor &&
                 <ModalVitoria vencedor={vencedor} onClose={() => {
                     setGameOver(false)
                     setVencedor(false)
                     handleReiniciarClick()
                 }} />
             }
-
+            {gameOver && !vencedor &&
+                <ModalFail vencedor={vencedor} onClose={() => {
+                    setGameOver(false)
+                    setVencedor(false)
+                    handleReiniciarClick()
+                }
+                }
+                />
+            }
             <div className={`${styles.status} ${showErro ? styles.visivel : styles.invisivel}`}>
                 {erroPalavra}
             </div>
 
             <article className={styles.tabuleiroContainer}>
                 {/* Tabuleiro 1 */}
-                <div className={styles.tabuleiro}>
+                <div className={styles.tabuleiro2a}>
                     {/* Histórico do tabuleiro 1 */}
                     {histórico1.map((registro, index) => (
                         <div className={styles.linha} key={index}>
@@ -285,8 +364,10 @@ function Board2() {
                                     key={idx}
                                     onClick={() => handleQuadradoClick(idx)}
                                     className={`
-                                    ${styles.quadradoAtivo} 
-                                    ${posicaoSelecionada === idx ? styles.selecionado : ''}`}>
+                                        ${styles.quadradoAtivo} 
+                                        ${posicaoSelecionada === idx && !isDark ? styles.selecionado : ''}
+                                        ${posicaoSelecionada === idx && isDark ? styles.NightSelecionado : ''}
+                                        ${isDark && styles.NightQuadradoAtivo}`}>
                                     {letra}
                                 </div>
                             ))}
@@ -302,7 +383,7 @@ function Board2() {
                 </div>
 
                 {/* Tabuleiro 2 */}
-                <div className={styles.tabuleiro}>
+                <div className={styles.tabuleiro2b}>
                     {/* Histórico do tabuleiro 2 */}
                     {histórico2.map((registro, index) => (
                         <div className={styles.linha} key={index}>
@@ -335,8 +416,10 @@ function Board2() {
                                     key={idx}
                                     onClick={() => handleQuadradoClick(idx)}
                                     className={`
-                                    ${styles.quadradoAtivo} 
-                                    ${posicaoSelecionada === idx ? styles.selecionado : ''}`}>
+                                        ${styles.quadradoAtivo} 
+                                        ${posicaoSelecionada === idx && !isDark ? styles.selecionado : ''}
+                                        ${posicaoSelecionada === idx && isDark ? styles.NightSelecionado : ''}
+                                        ${isDark && styles.NightQuadradoAtivo}`}>
                                     {letra}
                                 </div>
                             ))}
@@ -359,7 +442,7 @@ function Board2() {
                         <button
                             key={letra}
                             onClick={() => handleInput(letra)}
-                            className={styles.tecla}
+                            className={`${styles.tecla} ${letrasApagadas.has(letra) ? styles.APAGADO : ''}`}
                             disabled={gameOver}
                         >
                             {letra}
@@ -372,7 +455,7 @@ function Board2() {
                         <button
                             key={letra}
                             onClick={() => handleInput(letra)}
-                            className={styles.tecla}
+                            className={`${styles.tecla} ${letrasApagadas.has(letra) ? styles.APAGADO : ''}`}
                             disabled={gameOver}
                         >
                             {letra}
@@ -388,7 +471,7 @@ function Board2() {
                         <button
                             key={letra}
                             onClick={() => handleInput(letra)}
-                            className={styles.tecla}
+                            className={`${styles.tecla} ${letrasApagadas.has(letra) ? styles.APAGADO : ''}`}
                             disabled={gameOver}
                         >
                             {letra}
@@ -400,7 +483,7 @@ function Board2() {
                 </div>
             </div>
 
-        </div>
+        </motion.div>
     );
 }
 

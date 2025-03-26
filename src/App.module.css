@@ -1,24 +1,42 @@
 .menuLeft {
-    top: 0;
+    bottom: 0;
     left: 0;
+    z-index: 11;
+    padding-top: 50px;
     position: fixed;
     height: 100dvh;
     width: 100px;
-    background-color: #323b48;
-
+    background-color: #000000e9;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 }
 
+.menuRight {
+    top: 0;
+    right: 0;
+    z-index: 11;
+    position: fixed;
+    height: 100dvh;
+    width: 100px;
+    background-color: #000000e9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
 .menuLeftUl {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 20px;
 
+    height: 100dvh;
+    width: 100px;
     padding-top: 20px;
     padding-bottom: 20px;
 
@@ -26,27 +44,94 @@
 
 .menuLeftUl div {
     display: flex;
+    width: fit-content;
     align-items: center;
     justify-content: center;
     color: white;
 }
 
+.romanNumber {
+    text-decoration: none !important;
+    color: inherit !important;
+    cursor: pointer;
+    width: 100%;
+    min-height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.romanNumber:hover {
+    h2 {
+        color: yellow !important;
+    }
+
+    svg {
+        fill: yellow !important;
+    }
+
+    background-color: rgb(36, 36, 36);
+    transition: all 0.3s;
+}
+
+.romanNumber:visited {
+    text-decoration: none !important;
+    color: inherit !important;
+}
+
+.romanNumber:focus {
+    text-decoration: none !important;
+    color: inherit !important;
+}
+
 
 .svgs {
-    width: 40px;
-    height: 40px; 
+    width: 60px;
+    height: 40px;
+    margin-right: -13px;
 }
 
-.menuRight {
-    top: 0;
-    right: 0;
-    position: fixed;
-    height: 100dvh;
-    width: 100px;
-    background-color: #323b48;
+.userAndInfo {
+    color: white;
 }
 
-.espelho {
-    transform: scaleX(-1); /* Espelha horizontalmente a imagem */
-    -webkit-transform: scaleX(-1); /* Para Safari */
-  }
+
+@media (max-width: 1150px) {
+    .menuLeft {
+        padding: 0;
+        display: flex;
+        flex-direction: row;
+        bottom: 0;
+        left: 0;
+        width: 100vw;
+        height: 70px;
+        align-items: center;
+        justify-content: space-around;
+    }
+
+    .menuRight {
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100px;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-around;
+        padding-top: 0;
+        
+    }
+
+    .menuLeftUl {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: fit-content;
+        height: 100%;
+        padding-top: 20px;
+        padding-bottom: 20px;
+
+    }
+}

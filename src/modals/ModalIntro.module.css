@@ -1,0 +1,101 @@
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+    z-index: 50;
+}
+
+.modalContent {
+    background: rgb(30, 30, 30);
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    z-index: 20;
+    font-weight: 300;
+    color: white;
+}
+
+.interrogacao {
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+.linhasIntro {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px gray solid;
+}
+
+.introSQ1 {
+    margin: auto;
+    width: fit-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    padding-top: 5px;
+    color: rgb(255, 255, 255);
+    font-weight: 800 !important;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.introSQgray {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background-color: #8d8d8d87;
+    z-index: 11;
+    border-radius: 7px;
+}
+
+.introSQyellow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background-color: #d2c538;
+    border-radius: 7px;
+    color: black;
+}
+
+.introSQgreen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background-color: rgb(58, 117, 52);
+    border-radius: 7px;
+}
+
+.button {
+    margin-top: -10px;
+    margin-bottom: -30px;
+    color: red;
+    font-size: 2rem;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.button:hover {
+    color: rgb(191, 68, 68);
+}
+
+.closeDiv {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    vertical-align: middle;
+}

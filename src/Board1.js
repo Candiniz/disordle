@@ -5,7 +5,10 @@ import styles from './Board.module.css';
 import { FaBackspace } from "react-icons/fa";
 import './globals.css';
 import { getItem, setItem } from './utils/localStorage.js';
-import ModalVitoria from './ModalVitoria.js';
+import ModalVitoria from './modals/ModalVitoria.js';
+import ModalFail from './modals/ModalFail.js';
+import { useTheme } from "./ThemeContext.js";
+
 
 // Função para remover acentos e cedilhas
 const removerAcentos = (str) => {
@@ -81,6 +84,10 @@ function Board1() {
   const [erroPalavra, setErroPalavra] = useState('');
   const [showErro, setShowErro] = useState(false);
   const [animacaoEmCurso, setAnimacaoEmCurso] = useState(false);
+  const [letrasApagadas, setLetrasApagadas] = useState(new Set());
+
+
+  const { isDark } = useTheme();
 
   useEffect(() => {
     setItem("b1palavra1", palavra)
@@ -111,46 +118,88 @@ function Board1() {
     setTentativa(Array(5).fill(''));
     setHistórico([])
     setCopias([1, 2, 3, 4, 5])
+    setLetrasApagadas(new Set())
   };
 
   const verificarCor = (tentativa, palavra) => {
-    const cores = Array(5).fill('gray');
+    const cores = Array(5).fill('Qgray');
 
-    // Normalizar as palavras (remover acentos) para a comparação
+    // Normalizar palavras (remover acentos) para comparação
     const palavraSemAcento = removerAcentos(palavra);
-    // Garantir que 'tentativa' seja um array, caso seja uma string
-    const tentativaSemAcento = Array.isArray(tentativa) ? tentativa.map(letra => removerAcentos(letra)) : tentativa.split('').map(letra => removerAcentos(letra));
+    const tentativaSemAcento = Array.isArray(tentativa)
+      ? tentativa.map(letra => removerAcentos(letra))
+      : tentativa.split('').map(letra => removerAcentos(letra));
 
-    // Comparar as letras nas mesmas posições
+    // Criar um mapa para contar quantas vezes cada letra aparece na palavra
+    const contagemLetras = {};
+    for (const letra of palavraSemAcento) {
+      contagemLetras[letra] = (contagemLetras[letra] || 0) + 1;
+    }
+
+    // Criar um mapa para contar quantas vezes já marcamos uma letra
+    const letrasUsadas = {};
+
+    // 🔹 Primeira passagem: Identificar verdes
     for (let i = 0; i < 5; i++) {
       if (tentativaSemAcento[i] === palavraSemAcento[i]) {
-        cores[i] = 'green'; // Verde para letra correta na posição certa
+        cores[i] = 'Qgreen';
+        letrasUsadas[tentativaSemAcento[i]] = (letrasUsadas[tentativaSemAcento[i]] || 0) + 1;
       }
     }
 
-    // Comparar as letras que existem na palavra, mas em posições diferentes
+    // 🔸 Segunda passagem: Identificar amarelos (respeitando a quantidade disponível)
     for (let i = 0; i < 5; i++) {
-      if (cores[i] === 'green') continue; // Ignorar letras que já são verdes
-      if (palavraSemAcento.includes(tentativaSemAcento[i]) && tentativaSemAcento[i] !== palavraSemAcento[i]) {
-        cores[i] = 'yellow'; // Amarelo para letras corretas, mas na posição errada
+      if (cores[i] === 'Qgreen') continue; // Já está marcado como verde
+
+      const letra = tentativaSemAcento[i];
+
+      // Verifica se a letra existe na palavra e se ainda há "disponibilidade" para amarelo
+      if (palavraSemAcento.includes(letra) && (letrasUsadas[letra] || 0) < contagemLetras[letra]) {
+        cores[i] = 'Qyellow';
+        letrasUsadas[letra] = (letrasUsadas[letra] || 0) + 1; // Marca que usamos essa letra
       }
     }
 
     return cores;
   };
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (gameOver) return;
+
+      const key = event.key.toUpperCase();
+
+      if (key === "ENTER") {
+        event.preventDefault();
+        handleSubmit();
+      } else if (key === "BACKSPACE") {
+        event.preventDefault();
+        handleBackspace();
+      } else if (key === "ARROWRIGHT") {
+        event.preventDefault();
+        setPosicaoSelecionada((prev) => Math.min(prev + 1, 4)); // Evita passar do último quadrado
+      } else if (key === "ARROWLEFT") {
+        event.preventDefault();
+        setPosicaoSelecionada((prev) => Math.max(prev - 1, 0)); // Evita passar do primeiro quadrado
+      } else if (/^[A-Z]$/.test(key)) {
+        handleInput(key);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [tentativa, posicaoSelecionada, gameOver]);
+
+
+
 
   const handleInput = (letra) => {
-    if (!gameOver) {
+    if (posicaoSelecionada < 5) {
       const novaTentativa = [...tentativa];
       novaTentativa[posicaoSelecionada] = letra;
       setTentativa(novaTentativa);
 
-      let proximaPosicao = posicaoSelecionada;
-      while (proximaPosicao < 4 && novaTentativa[proximaPosicao] !== '') {
-        proximaPosicao++;
-      }
-      setPosicaoSelecionada(proximaPosicao);
+      setPosicaoSelecionada((prev) => (prev < 4 ? prev + 1 : prev));
     }
   };
 
@@ -174,6 +223,16 @@ function Board1() {
 
         return;
       } else {
+        setLetrasApagadas(prev => {
+          const novasLetrasApagadas = new Set(prev);
+          tentativa.forEach((letra) => {
+            if (!removerAcentos(palavra).includes(removerAcentos(letra))) {
+              novasLetrasApagadas.add(letra);
+            }
+          });
+          return novasLetrasApagadas;
+        });
+
         setTimeout(() => {
           setCopias(prevCopias => {
             if (prevCopias.length > 0) {
@@ -233,21 +292,40 @@ function Board1() {
 
   const handleBackspace = () => {
     const novaTentativa = [...tentativa];
-    novaTentativa[posicaoSelecionada] = '';
-    setTentativa(novaTentativa);
 
-    let novaPosicao = posicaoSelecionada;
-    while (novaPosicao > 0 && novaTentativa[novaPosicao] === '') {
-      novaPosicao--;
+    if (novaTentativa[posicaoSelecionada] !== '') {
+      novaTentativa[posicaoSelecionada] = '';
+    } else if (posicaoSelecionada > 0) {
+      novaTentativa[posicaoSelecionada - 1] = '';
+      setPosicaoSelecionada((prev) => prev - 1);
     }
-    setPosicaoSelecionada(novaPosicao);
+
+    setTentativa(novaTentativa);
   };
 
-  return (
-    <div className={styles.game}>
 
-      {gameOver &&
+  return (
+    <motion.div
+      className={styles.game}
+      initial={{ rotateX: 90 }}
+      animate={{ rotateX: 0  }}
+      transition={{
+        duration: 0.3,
+      }}
+    >
+
+      {gameOver && vencedor &&
         <ModalVitoria vencedor={vencedor} onClose={() => {
+          setGameOver(false)
+          setVencedor(false)
+          handleReiniciarClick()
+        }
+        }
+        />
+      }
+
+      {gameOver && !vencedor &&
+        <ModalFail vencedor={vencedor} onClose={() => {
           setGameOver(false)
           setVencedor(false)
           handleReiniciarClick()
@@ -259,9 +337,9 @@ function Board1() {
       <div className={`${styles.status} ${showErro ? styles.visivel : styles.invisivel}`}>
         {erroPalavra}
       </div>
-      {gameOver && !vencedor && <div className={styles.status}>Game Over! A palavra era: {palavra}</div>}
+      { gameOver && !vencedor && <div className={styles.status}>Game Over! A palavra era: {palavra}</div> }
 
-      <div className={styles.tabuleiro}>
+      <div className={`${styles.tabuleiro} ${styles.marginAuto}`}>
         {histórico.map((tentativa, index) => (
           <div className={styles.linha} key={index}>
             {verificarCor(tentativa, palavra).map((cor, idx) => (
@@ -297,7 +375,11 @@ function Board1() {
             {Array.from({ length: 5 }, (_, idx) => (
               <div
                 key={idx}
-                className={`${styles.quadradoAtivo} ${posicaoSelecionada === idx ? styles.selecionado : ''}`}
+                className={`
+                  ${styles.quadradoAtivo} 
+                  ${posicaoSelecionada === idx && !isDark ? styles.selecionado : ''}
+                  ${posicaoSelecionada === idx && isDark ? styles.NightSelecionado : ''}
+                  ${isDark && styles.NightQuadradoAtivo}`}
                 onClick={() => handleQuadradoClick(idx)}
               >
                 {tentativa[idx]}
@@ -328,7 +410,7 @@ function Board1() {
             <button
               key={letra}
               onClick={() => handleInput(letra)}
-              className={styles.tecla}
+              className={`${styles.tecla} ${letrasApagadas.has(letra) ? styles.APAGADO : ''}`}
               disabled={gameOver}
             >
               {letra}
@@ -341,7 +423,7 @@ function Board1() {
             <button
               key={letra}
               onClick={() => handleInput(letra)}
-              className={styles.tecla}
+              className={`${styles.tecla} ${letrasApagadas.has(letra) ? styles.APAGADO : ''}`}
               disabled={gameOver}
             >
               {letra}
@@ -357,7 +439,7 @@ function Board1() {
             <button
               key={letra}
               onClick={() => handleInput(letra)}
-              className={styles.tecla}
+              className={`${styles.tecla} ${letrasApagadas.has(letra) ? styles.APAGADO : ''}`}
               disabled={gameOver}
             >
               {letra}
@@ -370,7 +452,7 @@ function Board1() {
       </div>
 
 
-    </div>
+    </motion.div >
   );
 }
 

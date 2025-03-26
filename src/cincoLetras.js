@@ -84,5 +84,5 @@ export const cincoLetras = [
     "super", "tédio", "tempo", "tenda", "tenra", "terra", "texto", "tirar", "toque", "trama",
     "trapo", "turba", "tutor", "único", "valor", "verba", "verso", "vesti", "vexar", "viaja",
     "vigia", "vigor", "vilão", "vinho", "vital", "viver", "vôlei", "vulgo", "xampu", "xarope",
-    "zebra", "zelo", "zíper"
+    "zebra", "zelos", "zíper", "mamão"
 ];

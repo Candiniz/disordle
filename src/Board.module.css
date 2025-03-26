@@ -2,22 +2,204 @@
 
 
 .game {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
   text-align: center;
+  z-index: 10;
 }
 
 .tabuleiroContainer {
   display: flex;
   margin: auto;
   width: 100%;
-  align-items: center;
-  justify-content: center;
+  align-items: center !important;
+  justify-content: center !important;
   gap: 50px;
 }
 
+.tabuleiro4Container {
+  display: flex;
+  margin: auto;
+  width: calc(100vw - 300px);
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-top: -15px;
+}
+
+.marginAuto {
+  margin: auto;
+}
+
 .tabuleiro {
+  width: fit-content;
   display: flex;
   flex-direction: column;
   margin-top: 10px;
+}
+
+.tabuleiro2a .tabuleiro2b {
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+
+@media (max-width: 1150px) {
+  .tabuleiro4Container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(1);
+    margin: auto;
+    width: 94vw;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tabuleiro, .tabuleiro2a, .tabuleiro2b {
+    transform: translateY(30px);
+  }
+
+  .tabuleiro4a,
+  .tabuleiro4b,
+  .tabuleiro4c,
+  .tabuleiro4d {
+    transform: scale(0.8);
+    margin: -100px;
+  }
+}
+
+@media (max-width: 780px) {
+  .tabuleiro4Container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(1);
+    margin: auto;
+    width: 94vw;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tabuleiro4a,
+  .tabuleiro4b,
+  .tabuleiro4c,
+  .tabuleiro4d {
+    transform: scale(0.6);
+    margin: -100px;
+  }
+}
+
+@media (max-width: 580px) {
+  .tabuleiro4Container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, auto);
+    margin: auto;
+    width: 94vw;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tabuleiro4a,
+  .tabuleiro4b,
+  .tabuleiro4c,
+  .tabuleiro4d {
+    transform: scale(0.5);
+    margin: -90px;
+  }
+}
+
+@media (max-width: 650px) {
+  .tabuleiroContainer {
+    display: flex;
+    flex-direction: row;
+    width: 100vw;
+    height: 100vh;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0;
+  }
+
+  .tabuleiro {
+    margin-top: 00px;
+  }
+
+
+  .tabuleiro2a {
+    top: 0;
+    left: 10px;
+    position: fixed;
+    margin-top: 100px;
+    transform: scale(0.9);
+  }
+
+  .tabuleiro2b {
+    top: 0;
+    right: 10px;
+    position: fixed;
+    margin-top: 100px;
+    transform: scale(0.9);
+  }
+}
+
+@media (max-width: 550px) {
+  .tabuleiro2a {
+    top: 0;
+    left: -15px;
+    position: fixed;
+    margin-top: 20vh;
+    transform: scale(0.7);
+  }
+
+  .tabuleiro2b {
+    top: 0;
+    right: -15px;
+    position: fixed;
+    margin-top: 20vh;
+    transform: scale(0.7);
+  }
+}
+
+@media (max-width: 450px) {
+  .tabuleiro2a {
+    top: 0;
+    left: -30px;
+    position: fixed;
+    margin-top: 20vh;
+    transform: scale(0.65);
+  }
+
+  .tabuleiro2b {
+    top: 0;
+    right: -30px;
+    position: fixed;
+    margin-top: 20vh;
+    transform: scale(0.65);
+  }
+}
+
+@media (max-width: 393px) {
+  .tabuleiro2a {
+    top: 0;
+    left: -50px;
+    position: fixed;
+    margin-top: 20vh;
+    transform: scale(0.5);
+  }
+
+  .tabuleiro2b {
+    top: 0;
+    right: -50px;
+    position: fixed;
+    margin-top: 20vh;
+    transform: scale(0.5);
+  }
 }
 
 .status {
@@ -28,7 +210,8 @@
   background-color: wheat;
   color: #434f62;
   width: 300px;
-  padding-top: 5px; padding-bottom: 3px;
+  padding-top: 5px;
+  padding-bottom: 3px;
   border-radius: 12.5px;
   margin: auto;
 }
@@ -49,24 +232,30 @@
   justify-content: center;
 }
 
+.quadrado .quadrado4 .quadrado4Ativo .quadradoAtivo .NightQuadradoAtivo .NightQuadradoAtivo4 .NightSelecionado .NightSelecionado4 {
+  z-index: 11;
+}
+
 .quadrado {
+
   width: 50px;
   height: 50px;
-  background-color: #3c4556;
+  background-color: #00000060;
   margin: 2px;
   border-radius: 7px;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 24px;
-  cursor: pointer;
+
   padding-top: 5px;
+  color: rgb(255, 255, 255);
 }
 
 .quadradoAtivo {
   width: 50px;
   height: 50px;
-  border: 3px solid #262d37;
+  border: 2px solid #262d37;
   border-radius: 7px;
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
@@ -78,11 +267,67 @@
   cursor: pointer;
   padding-top: 5px;
   transition: all 0.2s ease, transform 0.1s ease;
-  color: white;
+  color: #262d37;
+}
+
+.quadrado4 {
+  width: 40px;
+  height: 40px;
+  background-color: #00000060;
+  margin: 2px;
+  border-radius: 7px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  padding-top: 5px;
+}
+
+.quadrado4Ativo {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #262d37;
+  border-radius: 7px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  margin: 2px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  cursor: pointer;
+  padding-top: 5px;
+  transition: all 0.2s ease, transform 0.1s ease;
+  color: #262d37;
 }
 
 .selecionado {
-  border: 6px solid #262d37 !important;
+  border: 6px solid #262d37;
+  transition: all 0.2s ease, transform 0.1s ease;
+}
+
+.selecionado4 {
+  border: 4px solid #262d37;
+  transition: all 0.2s ease, transform 0.1s ease;
+}
+
+.NightQuadradoAtivo {
+  border: 2px solid white !important;
+  color: white;
+}
+
+.NightQuadradoAtivo4 {
+  border: 1px solid white !important;
+  color: white;
+}
+
+.NightSelecionado {
+  border: 6px solid white !important;
+  transition: all 0.2s ease, transform 0.1s ease;
+}
+
+.NightSelecionado4 {
+  border: 4px solid white !important;
   transition: all 0.2s ease, transform 0.1s ease;
 }
 
@@ -95,22 +340,24 @@
   justify-content: center;
   align-items: center;
   font-size: 24px;
+  color: rgb(255, 255, 255);
 }
 
-.green {
-  background-color: rgb(96, 173, 87);
-  color: white;
+.Qgreen {
+  background-color: rgba(96, 173, 87, 0.689) !important;
+  color: rgb(255, 255, 255);
 }
 
-.yellow {
-  background-color: rgb(202, 202, 113);
+.Qyellow {
+  background-color: rgba(255, 255, 92, 0.779) !important;
   color: black;
 }
 
-.gray {
-  background-color: #8d8d8d;
+.Qgray {
+  background-color: #8d8d8d87 !important;
   color: white;
 }
+
 
 .teclado {
   display: flex;
@@ -122,6 +369,14 @@
   gap: 4px;
   /* Espaçamento entre as linhas */
   padding: 20px;
+  z-index: 11;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 1150px) {
+  .teclado {
+    margin-bottom: 70px;
+  }
 }
 
 .linhaTeclado {
@@ -139,12 +394,55 @@
   padding-top: 3px;
   border: none;
   border-radius: 5px;
-  background-color: #00000044;
+  background-color: #0000007b;
   color: white;
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.1s ease;
   font-family: "Josefin Sans", sans-serif;
   font-weight: 700;
+}
+
+
+
+@media (max-width: 500px) {
+  .teclado {
+    padding: 5px;
+  }
+
+  .tecla {
+    width: 28px;
+    height: 50px;
+    font-size: 12px;
+    border-radius: 3px;
+  }
+
+  .teclaEnter {
+    height: 50px !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .teclado {
+    padding: 5px;
+  }
+
+  .tecla {
+    width: 20px;
+    height: 50px;
+    font-size: 12px;
+    border-radius: 3px;
+  }
+
+  .teclaEnter {
+    height: 50px !important;
+    font-size: xx-small;
+  }
+}
+
+
+.APAGADO {
+  background-color: #55555573;
+  color: rgba(255, 255, 255, 0.226);
 }
 
 .teclaEnter {
@@ -184,4 +482,3 @@
   font-size: 20px;
   font-weight: bold;
 }
-
