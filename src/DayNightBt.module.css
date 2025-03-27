@@ -89,3 +89,10 @@
 .checkbox:checked + .content .label .ball .moonIcon {
     opacity: 1;
 }
+
+
+@media (max-width: 500px) {
+    .container {
+        transform: scale(0.8);
+    }
+}

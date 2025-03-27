@@ -407,7 +407,7 @@
 @media (max-width: 500px) {
   .teclado {
     padding: 5px;
-    margin-bottom: 130px;
+    margin-bottom: 80px;
   }
 
   .tecla {
@@ -425,7 +425,7 @@
 @media (max-width: 400px) {
   .teclado {
     padding: 5px;
-    margin-bottom: 130px;
+    margin-bottom: 80px;
   }
 
   .tecla {

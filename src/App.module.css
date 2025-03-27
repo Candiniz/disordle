@@ -1,8 +1,9 @@
 .menuLeft {
-    bottom: 0;
+    top: 0;
     left: 0;
     z-index: 11;
     padding-top: 50px;
+    padding-bottom: 50px;
     position: fixed;
     height: 100dvh;
     width: 100px;
@@ -14,7 +15,7 @@
 }
 
 .menuRight {
-    top: 0;
+    bottom: 0;
     right: 0;
     z-index: 11;
     position: fixed;
@@ -94,8 +95,27 @@
 }
 
 .userAndInfo {
-    color: white;
+    color: #a58f70;
+    display: flex;
+    gap: 10px;
+    font-size: 25px;
 }
+.userAndInfo button {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        color: #a58f70;
+        transition: all 0.3s;
+        width: 30px;
+        height: 30px;
+        font-size: 25px;
+        transition: all 0.3s;
+}
+.userAndInfo button:hover {
+    transform: scale(1.15);
+}
+
+
 
 
 @media (max-width: 1150px) {
@@ -103,8 +123,11 @@
         padding: 0;
         display: flex;
         flex-direction: row;
-        bottom: 0;
+        top: 0;
         left: 0;
+        padding: 0;
+        padding-left: 10px;
+        padding-right: 10px;
         width: 100vw;
         height: 70px;
         align-items: center;
@@ -112,15 +135,15 @@
     }
 
     .menuRight {
-        top: 0;
+        bottom: 0;
         left: 0;
         width: 100vw;
-        height: 100px;
+        height: 70px;
         flex-direction: row;
         align-items: center;
         justify-content: space-around;
         padding-top: 0;
-        
+
     }
 
     .menuLeftUl {
@@ -134,10 +157,25 @@
         padding-bottom: 20px;
 
     }
+    .userAndInfo button {
+        font-size: 20px;
+    }
 }
 
 @media (max-width: 500px) {
     .romanNumber {
         transform: scale(0.85);
+    }
+}
+
+.logo {
+    width: 250px;
+    transform: rotate(90deg);
+}
+
+@media (max-width: 1150px) {
+    .logo {
+        width: 200px;
+        transform: rotate(0);
     }
 }

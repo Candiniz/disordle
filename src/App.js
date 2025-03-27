@@ -33,6 +33,9 @@ export default function App() {
   const handleClose = () => {
     setIsModalOpen(false);
   };
+  const openModal = () => {
+    setIsModalOpen(true)
+  }
 
   return (
     <div className="MainApp">
@@ -100,12 +103,12 @@ export default function App() {
           </Link>
         </ul>
         <div className={styles.userAndInfo}>
-          <FaInfoCircle />
-          <LuCircleUserRound />
+          <button onClick={openModal}><FaInfoCircle /></button>
+          <button><LuCircleUserRound /></button>
         </div>
       </div>
       <div className={styles.menuRight}>
-        {/* Aqui você pode colocar mais conteúdo ou componentes para o menu direito */}
+        <img src='disordle-logo.png' alt='Disordle Logo' className={styles.logo} />
       </div>
     </div>
   );
