@@ -29,7 +29,7 @@
   align-items: center;
   justify-content: center;
   gap: 20px;
-  margin-top: -15px;
+  margin-top: 15px;
 }
 
 .marginAuto {
@@ -50,6 +50,15 @@
   margin-top: 10px;
 }
 
+@media (max-height: 670px) {
+
+  .tabuleiro,
+  .tabuleiro2a,
+  .tabuleiro2b {
+    transform: scale(0.8) !important;
+    margin-top: 50px;
+  }
+}
 
 @media (max-width: 1150px) {
   .tabuleiro4Container {
@@ -60,9 +69,16 @@
     width: 94vw;
     align-items: center;
     justify-content: center;
+    margin: auto;
+    padding-top: 50px;
   }
 
-  .tabuleiro, .tabuleiro2a, .tabuleiro2b {
+  .tabuleiro {
+    margin-top: 90px;
+  }
+
+  .tabuleiro2a,
+  .tabuleiro2b {
     transform: translateY(30px);
   }
 
@@ -127,7 +143,7 @@
   }
 
   .tabuleiro {
-    margin-top: 00px;
+    margin-top: 90px;
   }
 
 
@@ -204,16 +220,20 @@
 
 .status {
   opacity: 0;
-  transform: scale(0.5);
-  min-height: 25px;
+  position: absolute;
+  top: 100px;
+  min-height: 30px;
   transition: opacity 0.5s ease, transform 0.5s ease;
-  background-color: wheat;
+  background-color: rgb(219, 186, 38);
   color: #434f62;
   width: 300px;
   padding-top: 5px;
   padding-bottom: 3px;
   border-radius: 12.5px;
-  margin: auto;
+  z-index: 15 !important;
+  margin-top: 20px;
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .visivel {
@@ -233,7 +253,7 @@
 }
 
 .quadrado .quadrado4 .quadrado4Ativo .quadradoAtivo .NightQuadradoAtivo .NightQuadradoAtivo4 .NightSelecionado .NightSelecionado4 {
-  z-index: 11;
+  z-index: 10;
 }
 
 .quadrado {
@@ -368,13 +388,14 @@
   gap: 4px;
   /* Espaçamento entre as linhas */
   padding: 20px;
-  z-index: 11;
+  z-index: 1;
   margin-bottom: 20px;
 }
 
 @media (max-width: 1150px) {
   .teclado {
-    margin-bottom: 80px !important;
+    margin-bottom: 90px !important;
+    margin-top: -30px;
   }
 }
 
@@ -406,12 +427,12 @@
 @media (max-width: 500px) {
   .teclado {
     padding: 5px;
-    margin-bottom: 120px !important;
+    margin-bottom: 90px !important;
   }
 
   .tecla {
     width: 28px;
-    height: 50px;
+    height: 40px;
     font-size: 12px;
     border-radius: 3px;
   }
@@ -424,7 +445,7 @@
 @media (max-width: 400px) {
   .teclado {
     padding: 5px;
-    margin-bottom: 120px !important;
+    margin-bottom: 110px !important;
   }
 
   .tecla {
@@ -475,11 +496,4 @@
 .tecla:hover {
   background-color: #e0e0e0;
   /* Cor de hover para teclas */
-}
-
-
-.status {
-  margin-top: 20px;
-  font-size: 20px;
-  font-weight: bold;
 }

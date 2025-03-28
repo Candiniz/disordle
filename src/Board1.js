@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { cincoLetras } from './cincoLetras.js';
+import { cincoLetras } from './cincoLetrasOLD.js';
 import styles from './Board.module.css';
 import { FaBackspace } from "react-icons/fa";
 import './globals.css';
 import { getItem, setItem } from './utils/localStorage.js';
-import ModalVitoria from './modals/ModalVitoria.js';
-import ModalFail from './modals/ModalFail.js';
+import ModalVitoria from './modals/ModalVitoria1.js';
+import ModalFail1 from './modals/ModalFail1.js';
 import { useTheme } from "./ThemeContext.js";
 
 
@@ -88,6 +88,21 @@ function Board1() {
 
 
   const { isDark } = useTheme();
+
+  useEffect(() => {
+    // Verifica se o jogo estava em estado de Game Over ao carregar a página
+    const lsGameOver = getItem('b1gameOver');
+
+    if (lsGameOver === 'true') {
+      handleReiniciarClick();
+    }
+  }, []);
+
+  useEffect(() => {
+    // Sempre que o gameOver mudar, salva no localStorage
+    setItem('b1gameOver', gameOver.toString());
+  }, [gameOver]);
+
 
   useEffect(() => {
     setItem("b1palavra1", palavra)
@@ -284,6 +299,9 @@ function Board1() {
       setTimeout(() => {
         setErroPalavra('Palavra muito pequena!');
         setShowErro(true); // Exibe a mensagem de erro
+        setTimeout(() => {
+          setShowErro(false)
+        }, 2000)
       }, 10);
     }
   };
@@ -308,7 +326,7 @@ function Board1() {
     <motion.div
       className={styles.game}
       initial={{ rotateX: 90 }}
-      animate={{ rotateX: 0  }}
+      animate={{ rotateX: 0 }}
       transition={{
         duration: 0.3,
       }}
@@ -325,7 +343,7 @@ function Board1() {
       }
 
       {gameOver && !vencedor &&
-        <ModalFail vencedor={vencedor} onClose={() => {
+        <ModalFail1 vencedor={vencedor} onClose={() => {
           setGameOver(false)
           setVencedor(false)
           handleReiniciarClick()
@@ -337,7 +355,6 @@ function Board1() {
       <div className={`${styles.status} ${showErro ? styles.visivel : styles.invisivel}`}>
         {erroPalavra}
       </div>
-      { gameOver && !vencedor && <div className={styles.status}>Game Over! A palavra era: {palavra}</div> }
 
       <div className={`${styles.tabuleiro} ${styles.marginAuto}`}>
         {histórico.map((tentativa, index) => (

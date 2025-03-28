@@ -39,6 +39,7 @@ export default function App() {
 
   return (
     <div className="MainApp">
+      <p className={styles.itsMe}>Criado por Candiniz</p>
       {isModalOpen && <ModalIntro onClose={handleClose} />}
       <motion.div
         key={videoDay}  // Adicionamos key para garantir que o React re-renderize quando o src mudar

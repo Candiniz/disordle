@@ -1,35 +1,77 @@
 .modalOverlay {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(8px);
-    z-index: 10;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  z-index: 10;
+}
+
+.modalContent {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  z-index: 25;
+}
+
+.button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #ebba25;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+
+.button:hover {
+  background-color: #b38f23;
+}
+
+.palavrasCertas {
+  cursor: pointer;
+  padding: 10px;
+  color: #3b6e24;
+  transition: all 0.3s;
+  animation: aumentoReducao 2s ease-in-out infinite;
+}
+
+.palavrasCertas:hover {
+  color: #6ca352;
+}
+
+@keyframes aumentoReducao {
+  0% {
+    transform: scale(1);
   }
-  
-  .modalContent {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 16px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    z-index: 20;
+
+  50% {
+    transform: scale(1.35);
+    /* Aumenta um pouco */
   }
-  
-  .button {
-    margin-top: 1rem;
-    padding: 0.5rem 1rem;
-    background-color: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s ease-in-out;
+
+  100% {
+    transform: scale(1);
+    /* Volta ao tamanho original */
   }
-  
-  .button:hover {
-    background-color: #2563eb;
+}
+
+ul li {
+  font-weight: 300;
+  text-align: start;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+@media (max-width: 650px) {
+  ul li {
+    font-size: 13px;
+    font-weight: 300;
+
   }
-  
+}

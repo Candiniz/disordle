@@ -1,3 +1,12 @@
+.itsMe {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-weight: 300;
+}
+
 .menuLeft {
     top: 0;
     left: 0;
@@ -17,7 +26,7 @@
 .menuRight {
     bottom: 0;
     right: 0;
-    z-index: 11;
+    z-index: 10;
     position: fixed;
     height: 100dvh;
     width: 100px;
@@ -62,6 +71,7 @@
     justify-content: center;
     padding-top: 10px;
     padding-bottom: 10px;
+    z-index: 11;
 }
 
 .romanNumber:hover {
@@ -119,6 +129,9 @@
 
 
 @media (max-width: 1150px) {
+    .itsMe {
+        bottom: 73px;
+    }
     .menuLeft {
         padding: 0;
         display: flex;

@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { cincoLetras } from './cincoLetras.js';
+import { cincoLetras } from './cincoLetrasOLD.js';
 import styles from './Board.module.css';
 import { FaBackspace } from "react-icons/fa";
 import { getItem, setItem } from './utils/localStorage.js';
 import { useTheme } from "./ThemeContext.js";
-import ModalVitoria from './modals/ModalVitoria.js';
+import ModalVitoria4 from './modals/ModalVitoria4.js';
 import './globals.css';
-import ModalFail from './modals/ModalFail.js';
+import ModalFail4 from './modals/ModalFail4.js';
 
 // Função para remover acentos e cedilhas
 const removerAcentos = (str) => {
@@ -161,6 +161,19 @@ function Board4() {
         }
     };
 
+    useEffect(() => {
+        // Verifica se o jogo estava em estado de Game Over ao carregar a página
+        const lsGameOver = getItem('b2gameOver');
+    
+        if (lsGameOver === 'true') {
+          handleReiniciarClick();
+        }
+      }, []);
+    
+      useEffect(() => {
+        // Sempre que o gameOver mudar, salva no localStorage
+        setItem('b2gameOver', gameOver.toString());
+      }, [gameOver]);
 
     useEffect(() => {
         if (reiniciarJogo || (palavra1 === '' && palavra2 === '' && palavra3 === '' && palavra4 === '')) {
@@ -376,6 +389,9 @@ function Board4() {
             setTimeout(() => {
                 setErroPalavra('Palavra muito pequena!');
                 setShowErro(true); // Exibe a mensagem de erro
+                setTimeout(() => {
+                    setShowErro(false)
+                  }, 2000)
             }, 10);
         }
     };
@@ -392,14 +408,14 @@ function Board4() {
         >
 
             {gameOver &&
-                <ModalVitoria vencedor={vencedor} onClose={() => {
+                <ModalVitoria4 vencedor={vencedor} onClose={() => {
                     setGameOver(false)
                     setVencedor(false)
                     handleReiniciarClick()
                 }} />
             }
             {gameOver && !vencedor &&
-                <ModalFail vencedor={vencedor} onClose={() => {
+                <ModalFail4 vencedor={vencedor} onClose={() => {
                     setGameOver(false)
                     setVencedor(false)
                     handleReiniciarClick()
