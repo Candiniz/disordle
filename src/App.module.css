@@ -4,6 +4,7 @@
     left: 50%;
     transform: translateX(-50%);
     color: white;
+    z-index: 15;
     font-weight: 300;
 }
 
