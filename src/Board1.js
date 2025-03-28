@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { cincoLetras } from './cincoLetrasOLD.js';
+import { cincoLetras } from './cincoLetras.js';
 import styles from './Board.module.css';
 import { FaBackspace } from "react-icons/fa";
 import './globals.css';
@@ -52,7 +52,7 @@ const encontrarPalavraOriginal = (palavraDigitada) => {
   const palavraSemAcento = removerAcentos(palavraDigitada).toUpperCase();
 
   // Procurar pela palavra sem acento no array cincoLetras
-  return cincoLetras.find(palavra => removerAcentos(palavra).toUpperCase() === palavraSemAcento);
+  return cincoLetras.find(palavra => removerAcentos(palavra).trim().toUpperCase() === palavraSemAcento);
 };
 
 const pegarPalavraAleatoria = () => {

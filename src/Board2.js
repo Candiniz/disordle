@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { cincoLetras } from './cincoLetrasOLD.js';
+import { cincoLetras } from './cincoLetras.js';
 import styles from './Board.module.css';
 import { FaBackspace } from "react-icons/fa";
 import { getItem, setItem } from './utils/localStorage.js';

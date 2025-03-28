@@ -2728,6 +2728,8 @@ export const cincoLetras=[
   "quixa",
   "quiza",
   "quota",
+  "raios",
+  "risão",
   "rabaz",
   "rabel",
   "rabil",
