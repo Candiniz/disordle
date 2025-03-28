@@ -111,17 +111,19 @@
     gap: 10px;
     font-size: 25px;
 }
+
 .userAndInfo button {
-        background-color: transparent;
-        border: none;
-        cursor: pointer;
-        color: #a58f70;
-        transition: all 0.3s;
-        width: 30px;
-        height: 30px;
-        font-size: 25px;
-        transition: all 0.3s;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: #a58f70;
+    transition: all 0.3s;
+    width: 30px;
+    height: 30px;
+    font-size: 25px;
+    transition: all 0.3s;
 }
+
 .userAndInfo button:hover {
     transform: scale(1.15);
 }
@@ -131,8 +133,10 @@
 
 @media (max-width: 1150px) {
     .itsMe {
-        bottom: 73px;
+        bottom: 8px;
+        font-size: 11px;
     }
+
     .menuLeft {
         padding: 0;
         display: flex;
@@ -171,25 +175,28 @@
         padding-bottom: 20px;
 
     }
+
     .userAndInfo button {
         font-size: 20px;
+    }
+}
+
+
+.logo {
+    width: 220px;
+    transform: rotate(90deg);
+}
+
+@media (max-width: 1150px) {
+    .logo {
+        width: 160px;
+        margin-bottom: 10px;
+        transform: rotate(0);
     }
 }
 
 @media (max-width: 500px) {
     .romanNumber {
         transform: scale(0.85);
-    }
-}
-
-.logo {
-    width: 250px;
-    transform: rotate(90deg);
-}
-
-@media (max-width: 1150px) {
-    .logo {
-        width: 200px;
-        transform: rotate(0);
     }
 }
